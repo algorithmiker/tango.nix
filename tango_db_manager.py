@@ -2,21 +2,18 @@ import argparse
 import logging
 import os
 import subprocess
+import dataclasses
 
 logger = logging.getLogger("TangoDBManager")
 
 class DBCreateException(Exception):
   "Failed to create tango database"
-
-  source: Exception | None
   message: str | None
 
-  def __init__(self, source: Exception | None = None, message: str | None = None) -> None:
-    self.source = source
-    self.message = message
-    super().__init__()
-
-  pass
+  def __init__(self, message: str):
+      super().__init__(message)
+  
+  def __str__(self): return f"Failed to create tango database: {self.message}"
 
 
 def main(args: argparse.Namespace):

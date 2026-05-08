@@ -55,7 +55,7 @@
       # TODO: fix
       systemd.services.tango = lib.mkIf cfg.enable {
         description = "tango database server";
-        requires = lib.optionals cfg.database.managed [ "mysql.service" ];
+        requires = [ "mysql.service" ];
         wantedBy = lib.optionals cfg.autoStart [ "multi-user.target" ];
         path = [ config.services.mysql.package ];
         serviceConfig = {
