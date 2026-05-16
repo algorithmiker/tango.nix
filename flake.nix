@@ -7,6 +7,9 @@
 
   outputs =
     { nixpkgs, ... }:
+    let
+      forAllSystems = (nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed);
+    in
     {
       nixosModules.tango-controls = ./tango.module.nix;
 
@@ -28,5 +31,22 @@
           }
         ];
       };
+      checks = forAllSystems (system: {
+        test-db-creation = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
+          name = "test-db-creation";
+          nodes.machine =
+            { config, pkgs, ... }:
+            {
+              imports = [ ./tango.module.nix ];
+              services.tango-controls = {
+                enable = true;
+                autoStart = true;
+              };
+            };
+          testScript = ''
+            machine.wait_for_unit("tango.service")
+          '';
+        };
+      });
     };
 }
