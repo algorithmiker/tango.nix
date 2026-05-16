@@ -13,7 +13,9 @@
     {
       nixosModules.tango-controls = ./tango.module.nix;
 
-      nixosConfigurations."test" = nixpkgs.lib.nixosSystem {
+      # we don't want nix flake check to complain about this not being a proper nixosConfiguration
+      # (lacks a bootloader etc)
+      nonNixosConfigurations."test" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           {
