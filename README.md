@@ -14,5 +14,10 @@ inputs = {
 
 # configuration.nix
 imports = [tango-nix.nixosModules.tango-controls];
-services.tango-controls.enable = true;
+services.tango-controls = {
+  enable = true;
+  autoStart = true; # if you want to start it on boot
+  # if you want to automatically create the db user in mariadb 
+  database.managed = true; 
+};
 ```
