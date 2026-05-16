@@ -49,18 +49,18 @@
             };
           }
         ];
-        ensureDatabases = [ "tango" ];
       };
       # the service name needs to be tango to access the tango database via socket auth
       # TODO: fix
       systemd.services.tango = lib.mkIf cfg.enable {
         description = "tango database server";
         requires = [ "mysql.service" ];
+        after = [ "mysql.service" ];
         wantedBy = lib.optionals cfg.autoStart [ "multi-user.target" ];
         path = [ config.services.mysql.package ];
         serviceConfig = {
           # create the tango database on first start
-          ExecStartPre = "${lib.getExe pkgs.python3} ${./tango_db_manager.py} -s '${cfg.package}/share/tango/db/create_db.sql'";
+          ExecStartPre = "${lib.getExe pkgs.python3} ${./tango_db_manager.py} -s '${cfg.package}/share/tango/db/'";
           ExecStart = "${cfg.package}/bin/Databaseds 2 -ORBendPoint giop:tcp::${toString cfg.port} ${lib.optionalString cfg.verbose "-v"}";
           DynamicUser = true;
         };
