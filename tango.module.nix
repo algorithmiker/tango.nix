@@ -24,6 +24,11 @@
         default = false;
         description = "Whether to auto-start tango as a dependency of multi-user.target";
       };
+      databaseId = lib.mkOption {
+        type = lib.types.int;
+        default = 2;
+        description = "The tango database ID of this database.";
+      };
       database = {
         managed = lib.mkOption {
           type = lib.types.bool;
@@ -61,7 +66,7 @@
         serviceConfig = {
           # create the tango database on first start
           ExecStartPre = "${lib.getExe pkgs.python3} ${./tango_db_manager.py} -s '${cfg.package}/share/tango/db/'";
-          ExecStart = "${cfg.package}/bin/Databaseds 2 -ORBendPoint giop:tcp::${toString cfg.port} ${lib.optionalString cfg.verbose "-v"}";
+          ExecStart = "${cfg.package}/bin/Databaseds ${toString cfg.databaseId} -ORBendPoint giop:tcp::${toString cfg.port} ${lib.optionalString cfg.verbose "-v"}";
           DynamicUser = true;
         };
         environment = {
